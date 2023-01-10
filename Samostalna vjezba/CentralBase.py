@@ -42,21 +42,16 @@ class CentralBase():
     def getEndPoint(self):
         return self.endPoint
     def setPoints(self, points):
-        linesDrawn = {}
+        pointsDict = {}
         self.points = points
+        self.linesColor = {}
         for point in self.points.points:
             trailValues = point.getTrailValues()
             for uniqueId, value in trailValues.items():
-                try:
-                    if point.getId() in linesDrawn[uniqueId]:
-                        continue
-                except:
-                    pass
                 self.linesColor[(point.getId(), uniqueId)] = [0, 0]
-                try:
-                    linesDrawn[point.getId()].append(uniqueId)
-                except:
-                    linesDrawn[point.getId()] = [uniqueId]
+
+            pointsDict[point.getId()] = point    
+        self.setPointsDict(pointsDict)
 
     def getPoints(self):
         return self.points
@@ -142,7 +137,7 @@ class CentralBase():
                 if event.key==K_p:
                     pause = True
                 elif event.key  == pygame.K_r:
-                    self.points = Points(n=85,r=45, width=self.width, height=self.height)
+                    self.setPoints(Points(n=70,r=65, width=self.width, height=self.height))
                 elif event.key  == pygame.K_n:
                     xpoints = [number for number in range(0, self.epoch)]
                     ypoints = self.avgPaths
@@ -181,7 +176,6 @@ class CentralBase():
             if color[0] > 255: color[0] = 255
             if color[1] > 255: color[1] = 255
             pygame.draw.line(display, [255, 255 - color[0], 255 - color[1]], [self.pointsDict[pointTuple[0]].x, self.pointsDict[pointTuple[0]].y], [self.pointsDict[pointTuple[1]].x, self.pointsDict[pointTuple[1]].y], width=2)
-
         for point in self.points.points:
             pygame.draw.rect(display, [0, 0, 0], point.rect)
             pygame.draw.circle(display, point.color, [point.x, point.y], 18 if point.isStartEnd else 9)
