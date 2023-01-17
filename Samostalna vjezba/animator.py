@@ -16,7 +16,7 @@ def main():
     DISPLAY=pygame.display.set_mode((WIDTH,HEIGTH),0,32)
 
     clock = pygame.time.Clock()
-    points = Points(n=70,r=100, width=WIDTH, height=HEIGTH)
+    points = Points(n=300,r=40, width=WIDTH, height=HEIGTH)
     
     centralBase = CentralBase()
     centralBase.setPoints(points)
