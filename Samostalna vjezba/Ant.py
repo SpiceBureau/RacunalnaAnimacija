@@ -13,8 +13,9 @@ class Ant():
         self.location = [startPoint.x, startPoint.y]
         self.targetPoint = None
         self.currentPoint = startPoint
+        self.lastPoint = startPoint
         self.path = [startPoint.getId()]
-        self.speed = random.randint(3,4)
+        self.speed = random.randint(4,5)
         self.active = True
     
     def evaluatePath(self, byNumOfNodes, byDistance):

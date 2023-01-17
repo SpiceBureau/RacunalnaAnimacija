@@ -16,14 +16,14 @@ def main():
     DISPLAY=pygame.display.set_mode((WIDTH,HEIGTH),0,32)
 
     clock = pygame.time.Clock()
-    points = Points(n=140,r=45, width=WIDTH, height=HEIGTH)
+    points = Points(n=70,r=100, width=WIDTH, height=HEIGTH)
     
     centralBase = CentralBase()
     centralBase.setPoints(points)
     print("-"*40)
-    while True:
-        DISPLAY.fill((0, 0, 0))
-        clock.tick(150)
+    while 1:
+        DISPLAY.fill((200, 200, 200))
+        clock.tick(220)
 
         centralBase.handleKeys()
         centralBase.drawStuff(DISPLAY)

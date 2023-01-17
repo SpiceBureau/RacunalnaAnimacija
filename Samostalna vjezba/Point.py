@@ -2,6 +2,7 @@ from numpy import random as np_random
 import numpy as np
 import matplotlib.pyplot as plt
 import math 
+import random
 import pygame
 
 class Point():
@@ -11,8 +12,8 @@ class Point():
         self.y = y
         self.neighbours = {}
         self.trailsValues = {}
-        self.numberOfConnections = np_random.randint(2, 4)
-        self.color = [255, 255, 255]
+        self.numberOfConnections = random.choices([1, 2, 3, 4], weights=[1, 3, 4, 3], k=1)[0]
+        self.color = [0, 0, 0]
         self.rect = pygame.Rect((x - 5, y - 5), (10, 10))
         self.uniqueId = uniqueId
     
@@ -35,15 +36,15 @@ class Point():
             minKey = min(distances, key=distances.get)
             minDistance = distances[minKey]
             del distances[minKey]
-            if minDistance > np_random.poisson(lam=215, size=1): return
+            if minDistance > np_random.poisson(lam=200, size=1): return
             if minKey.numberOfConnections > 0: 
                 self.neighbours[minKey] = 0
                 self.numberOfConnections -= 1
-                self.trailsValues[minKey.getId()] = 10
+                self.trailsValues[minKey.getId()] = 1
 
                 minKey.neighbours[self] = 0
                 minKey.numberOfConnections -= 1
-                minKey.trailsValues[self.getId()] = 10
+                minKey.trailsValues[self.getId()] = 1
     
     def getTrailValues(self):
         return self.trailsValues
