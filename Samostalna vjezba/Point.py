@@ -1,4 +1,4 @@
-import random
+from numpy import random as np_random
 import numpy as np
 import matplotlib.pyplot as plt
 import math 
@@ -11,7 +11,7 @@ class Point():
         self.y = y
         self.neighbours = {}
         self.trailsValues = {}
-        self.numberOfConnections = random.randint(2, 4)
+        self.numberOfConnections = np_random.randint(2, 4)
         self.color = [255, 255, 255]
         self.rect = pygame.Rect((x - 5, y - 5), (10, 10))
         self.uniqueId = uniqueId
@@ -35,10 +35,7 @@ class Point():
             minKey = min(distances, key=distances.get)
             minDistance = distances[minKey]
             del distances[minKey]
-            print(minDistance)
-            if minDistance > 850: 
-                print("I returned")
-                return
+            if minDistance > np_random.poisson(lam=215, size=1): return
             if minKey.numberOfConnections > 0: 
                 self.neighbours[minKey] = 0
                 self.numberOfConnections -= 1

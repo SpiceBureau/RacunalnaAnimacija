@@ -22,6 +22,7 @@ class CentralBase():
         self.width = 1300
         self.height = 1000
         self.n = 250
+        self.maxNodesAllowedToVisit = 25
         self.liveAnts = None
         self.startPoint = None
         self.endPoint = None
@@ -45,6 +46,7 @@ class CentralBase():
         pointsDict = {}
         self.points = points
         self.linesColor = {}
+        self.ants = []
         for point in self.points.points:
             trailValues = point.getTrailValues()
             for uniqueId, value in trailValues.items():
@@ -85,7 +87,7 @@ class CentralBase():
                 weightSum += weight
             for uniqueId, weight in trailsValues.items():
                 if uniqueId in ant.path: 
-                    weightsList.append(weight / (weightSum * (1 + pathAsDict[uniqueId])))
+                    weightsList.append(weight / (weightSum * (3 + pathAsDict[uniqueId])))
                 else: weightsList.append(weight / weightSum) 
                 indexList.append(uniqueId)
             if not sum(weightsList) > 0:
@@ -117,7 +119,7 @@ class CentralBase():
             ant.location[1] += ant.speed*direction[1]
             rect = pygame.Rect(0, 0, 10, 10)
             rect.center = (ant.location[0], ant.location[1])
-            pygame.draw.rect(display,[0, 0, 255],rect)
+            pygame.draw.rect(display,[255, 0, 0],rect)
 
     def createAnts(self):
         if self.startPoint == None or self.endPoint == None: 
@@ -137,7 +139,7 @@ class CentralBase():
                 if event.key==K_p:
                     pause = True
                 elif event.key  == pygame.K_r:
-                    self.setPoints(Points(n=70,r=65, width=self.width, height=self.height))
+                    self.setPoints(Points(n=140,r=45, width=self.width, height=self.height))
                 elif event.key  == pygame.K_n:
                     xpoints = [number for number in range(0, self.epoch)]
                     ypoints = self.avgPaths
@@ -182,7 +184,7 @@ class CentralBase():
 
         for ant in self.ants:
             if not ant.getActiveStatus(): continue
-            if len(ant.path) > 30: 
+            if len(ant.path) > self.maxNodesAllowedToVisit: 
                 self.liveAnts -= 1
                 ant.setActiveStatus(False)
                 continue
@@ -199,9 +201,11 @@ class CentralBase():
         print("Epoch ", self.epoch)
         print("Im updating the trails")
         print("Succesful ants: ", len(self.successfulAnts))
+        self.liveAnts = self.n
         pathSum = 0
+        if len(self.successfulAnts) == 0: return
         for ant in self.successfulAnts:
-            antSolutionCost =  6 / ant.evaluatePath(True, False)
+            antSolutionCost =  (self.maxNodesAllowedToVisit) * 2.5 / (ant.evaluatePath(True, False) * 50)
             pathSum += ant.evaluatePath(True, False)
             pathCost = []
             for index, pointId in enumerate(ant.path):
@@ -219,21 +223,14 @@ class CentralBase():
 
                 trailValues0[data[1]] += data[2]
                 point0.setTrailValues(trailValues0)
-        self.successfulAnts = []
-        self.liveAnts = self.n
 
-        for pathCost in pathCosts:
-            for data in pathCost:
-                try:
-                    if self.linesColor[(data[0], data[1])][1] > 255:
-                        self.linesColor[(data[0], data[1])][0] += data[2]
-                    self.linesColor[(data[0], data[1])][1] += data[2]
-                except:
-                    if self.linesColor[(data[1], data[0])][1] > 255:
-                        self.linesColor[(data[1], data[0])][0] += data[2]
-                    self.linesColor[(data[1], data[0])][1] += data[2]
+                if self.linesColor[(data[0], data[1])][1] > 255:
+                    self.linesColor[(data[0], data[1])][0] += data[2]
+                self.linesColor[(data[0], data[1])][1] += data[2]
+
 
         self.evaporateTrials()
+        self.successfulAnts = []
 
     def evaporateTrials(self):
         for point in self.points.points:
